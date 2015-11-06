@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE mapper PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN'
+        'http://mybatis.org/dtd/mybatis-3-mapper.dtd'>
+
+<mapper namespace='de.teamrocket.relaxo.persistence.mapper.UserManagementMapper'>
+
+    <resultMap type="User" id="UserResult">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="prename" column="prename"/>
+        <result property="name" column="name"/>
+        <result property="admin" column="admin"/>
+        <result property="active" column="active"/>
+    </resultMap>
+
+    <resultMap type="UserGroup" id="UserGroupResult">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+    <!-- USER BEZOGENE ANWEISUNGEN -->
+    <update id="updateUser" parameterType="User">
+        UPDATE users
+        SET username = #{username}, password = #{password}, prename = #{prename},name = #{name}, admin = #{admin},
+        active = #{active}
+        WHERE id = #{id}
+    </update>
+
+    <insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO USERS(username, password, prename, name, admin, active)
+        VALUES(#{username}, #{password}, #{prename}, #{name}, #{admin}, #{active})
+    </insert>
+
+    <select id="selectUserByUsername" parameterType="String" resultType="User">
+        SELECT * FROM USERS WHERE username = #{username}
+    </select>
+
+    <select id="selectUserById" parameterType="Integer" resultType="User">
+        SELECT * FROM USERS WHERE id = #{id}
+    </select>
+
+    <select id="selectAllUser" resultMap="UserResult">
+        SELECT * FROM USERS
+    </select>
+
+    <select id="insertTokenForUser" parameterType="map">
+        INSERT INTO TOKEN(token,user_id)
+        VALUES(#{token}, #{user.id})
+    </select>
+
+    <update id="updateTokenForUser" parameterType="map">
+        UPDATE TOKEN SET token = #{token} WHERE user_id = #{user.id}
+    </update>
+
+    <delete id="deleteTokenForUser" parameterType="User">
+        DELETE FROM TOKEN WHERE user_id = #{id}
+    </delete>
+
+    <select id="selectUserByToken" parameterType="String" resultType="User">
+        SELECT id,username,password,prename,name,admin,active FROM user_token
+        WHERE token = #{token}
+    </select>
+
+    <select id="selectTokenByUser" parameterType="User" resultType="String">
+        SELECT token FROM TOKEN WHERE user_id = #{id}
+    </select>
+
+    <select id="selectUserByCredentials" parameterType="map" resultType="User">
+        SELECT * FROM USERS WHERE username = #{username} AND password = #{password}
+    </select>
+
+    <delete id="deleteUser" parameterType="User">
+        DELETE FROM USERS WHERE id = #{id}
+    </delete>
+
+
+    <!-- GRUPPEN BEZOGENE ANWEISUNGEN -->
+
+    <insert id="insertUserGroup" parameterType="UserGroup" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO USERGROUP(name)
+                VALUES(#{name})
+    </insert>
+
+    <select id="selectAllUserGroups" resultMap="UserGroupResult">
+        SELECT * FROM USERGROUP
+    </select>
+
+    <select id="selectUserGroupByName" resultMap="UserGroupResult">
+        SELECT * FROM USERGROUP WHERE name = #{name}
+    </select>
+
+    <delete id="deleteUserGroup" parameterType="UserGroup">
+        DELETE FROM USERGROUP WHERE name = #{name}
+    </delete>
+
+    <insert id="insertUserToUserGroup" parameterType="map">
+        INSERT INTO USER_USERGROUP(user_id,usergroup_id)
+                VALUES(#{user.id}, #{usergroup.id})
+    </insert>
+
+    <select id="selectUserGroupsByUser" parameterType="User" resultMap="UserGroupResult">
+        SELECT id, name FROM usergroups_user WHERE user_id = #{id}
+    </select>
+
+    <select id="selectUserByUserGroup" parameterType="UserGroup" resultMap="UserResult">
+        SELECT * FROM user_in_usergroup WHERE usergroup_id = #{id}
+    </select>
+
+    <select id="selectUserGroupById" parameterType="Integer" resultType="UserGroup">
+        SELECT * FROM USERGROUP WHERE id = #{id}
+    </select>
+
+    <delete id="removeUserFromUserGroup" parameterType="map">
+        DELETE FROM user_usergroup WHERE user_id= #{user_id} AND usergroup_id= #{usergroup_id}
+    </delete>
+</mapper>

@@ -1,0 +1,327 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE mapper PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN'
+        'http://mybatis.org/dtd/mybatis-3-mapper.dtd'>
+
+<mapper namespace='de.teamrocket.relaxo.persistence.mapper.WorkflowItemMapper'>
+
+    <resultMap type='TaskComponent' id='TaskComponentResult'>
+        <id property='id' column='task_component_id'/>
+        <result property='name' column='name'/>
+        <result property='comment' column='comment'/>
+        <result property='index' column='index'/>
+        <result property='required' column='required'/>
+        <result property='formGroupId' column='form_group_id'/>
+        <result property='readOnly' column='readonly'/>
+
+        <discriminator javaType='String' column='type'>
+            <case value='INT' resultType='TaskComponentInteger'>
+                <result property='defaultValue' column='int_default_value'/>
+                <result property='minValue' column='int_min_value'/>
+                <result property='maxValue' column='int_max_value'/>
+            </case>
+            <case value='FLOAT' resultType='TaskComponentFloat'>
+                <result property='defaultValue' column='float_default_value'/>
+                <result property='minValue' column='float_min_value'/>
+                <result property='maxValue' column='float_max_value'/>
+                <result property='scale' column='float_scale'/>
+            </case>
+            <case value='TEXTLABEL' resultType='TaskComponentText'>
+                <result property='defaultValue' column='text_default_value'/>
+                <result property='regex' column='text_regex'/>
+            </case>
+            <case value='DATE' resultType='TaskComponentDate'>
+                <result property='defaultValue' column='date_default_value'/>
+            </case>
+        </discriminator>
+    </resultMap>
+
+    <resultMap id="WorkflowItemResult" type="WorkflowItem">
+        <id property="id" column="workflow_item_id"/>
+        <result property="workflowId" column="workflow_id"/>
+        <result property="name" column="name"/>
+        <result property="comment" column="comment"/>
+        <result property="type" column="type"/>
+        <result property="xPos" column="x_pos"/>
+        <result property="yPos" column="y_pos"/>
+        <result property="locked" column="locked"/>
+
+        <discriminator javaType="String" column="type">
+            <case value="START" resultType="Start">
+                <result property="nextWorkflowItemId" column="next_workflow_item_id"/>
+            </case>
+            <case value="END" resultType="End">
+            </case>
+            <case value="TASK" resultType="Task">
+                <result property="nextWorkflowItemId" column="next_workflow_item_id"/>
+                <collection property="taskComponents" column="workflow_item_id" ofType="TaskComponent" select="getTaskComponents"/>
+            </case>
+            <case value="DECISION" resultType="WorkflowDecision">
+                <association property="nextWorkflowItemOnTrue" column="workflow_item_id" javaType="Integer" select="getNextWorkflowItemOnTrue"/>
+                <association property="condition" column="workflow_item_id" javaType="String" select="getCondition"/>
+                <collection property="nextWorkflowItems" ofType="Integer">
+                    <constructor>
+                        <idArg column="next_workflow_item_id" javaType="int"/>
+                    </constructor>
+                </collection>
+                <collection property="variables" column="workflow_item_id" ofType="TaskVariable" select="getTaskVariables"/>
+            </case>
+            <case value="SCRIPT" resultType="WorkflowScript">
+                <result property="nextWorkflowItemId" column="next_workflow_item_id"/>
+                <association property="script" column="workflow_item_id" javaType="String" select="getScript"/>
+				<collection property="variables" column="workflow_item_id" ofType="TaskVariable" select="getTaskVariables"/>
+            </case>
+            <case value="FORK" resultType="WorkflowFork">
+                <collection property="nextWorkflowItems" ofType="Integer">
+                    <constructor>
+                        <idArg column="next_workflow_item_id" javaType="int"/>
+                    </constructor>
+                </collection>
+            </case>
+            <case value="JOIN" resultType="WorkflowJoin">
+				<result property="nextWorkflowItemId" column="next_workflow_item_id"/>
+				<collection property="previousWorkflowItemIds" column="workflow_item_id" ofType="int" select="getPreviousWorkflowItems"/>
+            </case>
+        </discriminator>
+    </resultMap>
+
+    <resultMap id="FormGroupForTaskResult" type="FormGroupForTask">
+        <id property='formGroupId' column='form_group_id'/>
+        <collection property="taskComponentIds" ofType="Integer">
+            <constructor>
+                <idArg column="task_component_id" javaType="int"/>
+            </constructor>
+        </collection>
+    </resultMap>
+
+    <resultMap id="TaskVariableResult" type='TaskVariable'>
+        <result property="name" column="name"/>
+        <result property="taskId" column="task_id"/>
+        <result property="taskComponentId" column="task_component_id"/>
+    </resultMap>
+
+    <select id='getUserTasks' parameterType='map' resultMap='WorkflowItemResult'>
+        SELECT workflow_item_id, name, type FROM user_workflow_items WHERE type = 'TASK' AND user_id = #{userId} AND workflow_id = #{workflowId}
+    </select>
+
+    <select id='getAllTasks' parameterType='map' resultMap='WorkflowItemResult'>
+        SELECT id AS workflow_item_id, name, type FROM workflow_item WHERE type = 'TASK' AND workflow_id = #{workflowId}
+    </select>
+
+    <select id="getWorkflowItemsByJob" parameterType="int" resultMap="WorkflowItemResult">
+        SELECT workflow_item_id, workflow_id, name, comment, type, x_pos, y_pos, locked, next_workflow_item_id FROM all_job_workflowitems WHERE job_id = #{jobId}
+    </select>
+
+    <select id="getWorkflowItemsByJobAndStatus" parameterType="map" resultMap="WorkflowItemResult">
+        SELECT workflow_item_id, workflow_id, name, comment, type, x_pos, y_pos, locked, next_workflow_item_id FROM all_job_workflowitems WHERE job_id = #{jobId} AND done = #{status}
+    </select>
+
+    <select id="getWorkflowItemById" resultMap="WorkflowItemResult">
+        SELECT * FROM workflow_items_workflow WHERE workflow_item_id=#{workflowItemId}
+    </select>
+
+    <select id="checkWorkflowItemType" parameterType="String" resultType="boolean">
+        SELECT CASE WHEN EXISTS (
+          SELECT * FROM workflow_item_type WHERE name = #{type}
+        )
+        THEN CAST(1 AS BIT )
+        ELSE CAST(0 AS BIT) END
+    </select>
+
+    <select id="getTaskById" resultMap="WorkflowItemResult">
+        SELECT * FROM workflow_items_workflow WHERE workflow_item_id=#{taskId} AND type='TASK';
+    </select>
+
+    <select id="getWorkflowDecisionById" resultMap="WorkflowItemResult">
+        SELECT * FROM workflow_items_workflow WHERE workflow_item_id=#{workflowDecisionId} AND type='DECISION';
+    </select>
+    
+    <select id="getWorkflowScriptById" resultMap="WorkflowItemResult">
+        SELECT * FROM workflow_items_workflow WHERE workflow_item_id=#{workflowScriptId} AND type='SCRIPT';
+    </select>
+
+    <select id='canUserAccessWorkflowItem' parameterType='map' resultType='boolean'>
+        SELECT CASE WHEN EXISTS (
+        SELECT * FROM user_workflow_items WHERE workflow_item_id=#{workflowItemId} AND user_id=#{userId}
+        )
+        THEN CAST(1 AS BIT)
+        ELSE CAST(0 AS BIT) END
+    </select>
+
+    <select id='getTaskComponents' resultMap='TaskComponentResult'>
+        SELECT * FROM all_task_components WHERE task_id=#{taskId}
+    </select>
+
+    <insert id="createWorkflowItem" parameterType="WorkflowItem" useGeneratedKeys='true' keyProperty="id"
+            keyColumn="id">
+        INSERT INTO workflow_item(workflow_id, type, x_pos, y_pos) VALUES(#{workflowId}, #{type}, #{xPos}, #{yPos})
+    </insert>
+
+    <update id="updateWorkflowItem" parameterType="WorkflowItem">
+        UPDATE workflow_item SET name=#{name}, comment=#{comment}, x_pos=#{xPos}, y_pos=#{yPos} WHERE id=#{id}
+    </update>
+
+    <select id="getWorkflowItemsByWorkflowId" resultMap="WorkflowItemResult">
+        SELECT * FROM workflow_items_workflow WHERE workflow_id=#{workflowId}
+    </select>
+
+    <select id="getPreviousWorkflowItems" resultType="int">
+        SELECT workflow_item_id AS id FROM workflow_items_workflow WHERE next_workflow_item_id=#{workflowItemid}
+    </select>
+
+    <update id="updatePosition" parameterType="map">
+        UPDATE workflow_item SET x_pos = #{xPos}, y_pos = #{yPos} WHERE id = #{workflowItemId}
+    </update>
+
+    <insert id="setNextWorkflowItems" parameterType="map">
+        INSERT INTO next_workflow_item(workflow_item_id, next_workflow_item_id) VALUES
+        <foreach collection="nextWorkflowItemIds" item="nextWorkflowItemId" separator=",">
+            (#{workflowItemId}, #{nextWorkflowItemId})
+        </foreach>
+    </insert>
+
+    <select id="getNextWorkflowItems" resultType="Integer">
+         SELECT next_workflow_item_id FROM next_workflow_item WHERE workflow_item_id=#{workflowItemId}
+    </select>
+
+    <delete id="removeNextWorkflowItems" parameterType="int">
+      DELETE FROM next_workflow_item WHERE workflow_item_id = #{workflowItemId}
+    </delete>
+
+    <delete id="deleteWorkflowItem" parameterType="int">
+        DELETE from workflow_item WHERE id=#{workflowItemId}
+    </delete>
+
+    <update id="lockWorkflowItem">
+        UPDATE workflow_item SET locked = TRUE WHERE id=#{workflowItemId}
+    </update>
+
+    <update id="unlockWorkflowItem">
+        UPDATE workflow_item SET locked = FALSE WHERE id=#{workflowItemId}
+    </update>
+
+    <select id="isWorkflowItemLocked" resultType="boolean">
+        SELECT locked FROM workflow_item WHERE id=#{workflowItemId}
+    </select>
+
+    <insert id="setUserGroupsForTask">
+        INSERT INTO workflow_item_usergroup (workflow_item_id, usergroup_id)
+        VALUES
+        <foreach collection="usergroupIds" item="usergroupId" separator=",">
+            (#{workflowItemId}, #{usergroupId})
+        </foreach>
+    </insert>
+
+    <delete id="removeUserGroupFromWorkflowItem">
+        DELETE FROM workflow_item_usergroup WHERE usergroup_id=#{userGroupId} AND workflow_item_id = #{workflowItemId}
+    </delete>
+
+    <delete id="removeAllUserGroupsFromWorkflowItem">
+		DELETE FROM workflow_item_usergroup WHERE workflow_item_id = #{workflowItemId}
+    </delete>
+
+    <select id="getUserGroupForWorkflowItem" resultType="Integer">
+        SELECT usergroup_id FROM workflow_item_usergroup WHERE workflow_item_id=#{workflowItemId}
+    </select>
+
+    <select id="getComponentsAndFormGroupsForTask" resultMap="FormGroupForTaskResult">
+        SELECT form_group_id, task_component_id
+        FROM workflow_item_task_component_form_group
+        WHERE workflow_item_id = #{workflowItemId}
+    </select>
+
+    <insert id="createTaskComponent" parameterType="TaskComponent" useGeneratedKeys="true">
+        <selectKey keyProperty="id" keyColumn="id" resultType="int" order="AFTER">
+            SELECT CURRVAL('task_component_id_seq') AS id;
+        </selectKey>
+        INSERT INTO task_component (name, comment, required, type, form_group_id, index)
+        SELECT #{name}, #{comment}, #{required}, #{type}, #{formGroupId}, COALESCE(MAX(index) + 1, 0) AS index
+        FROM task_component WHERE form_group_id = #{formGroupId};
+
+        <choose>
+            <when test='_parameter.getClass().getSimpleName() == "TaskComponentInteger"'>
+                INSERT INTO task_component_int (task_component_id, default_value, min_value, max_value)
+                VALUES (CURRVAL('task_component_id_seq'), #{defaultValue}, #{minValue}, #{maxValue});
+            </when>
+            <when test='_parameter.getClass().getSimpleName() == "TaskComponentText"'>
+                INSERT INTO task_component_text (task_component_id, default_value, regex)
+                VALUES (CURRVAL('task_component_id_seq'), #{defaultValue}, #{regex});
+            </when>
+            <when test='_parameter.getClass().getSimpleName() == "TaskComponentDate"'>
+                INSERT INTO task_component_date (task_component_id, default_value)
+                VALUES (CURRVAL('task_component_id_seq'), #{defaultValue});
+            </when>
+            <when test='_parameter.getClass().getSimpleName() == "TaskComponentFloat"'>
+                INSERT INTO task_component_float (task_component_id, default_value, min_value, max_value, scale)
+                VALUES (CURRVAL('task_component_id_seq'), #{defaultValue}, #{minValue}, #{maxValue}, #{scale});
+            </when>
+        </choose>
+    </insert>
+
+    <delete id="deleteTaskComponent" parameterType="int">
+        DELETE FROM task_component WHERE id=#{id}
+    </delete>
+
+    <insert id="setComponentsForTask" parameterType="map">
+        INSERT INTO workflow_item_task_component (workflow_item_id, task_component_id, readonly)
+        VALUES
+        <foreach collection="taskComponentsForTask" item="taskComponentForTask" separator=",">
+            (#{workflowItemId}, #{taskComponentForTask.id}, #{taskComponentForTask.readOnly})
+        </foreach>
+    </insert>
+
+    <delete id="removeComponentFromWorkflowItem">
+        DELETE FROM workflow_item_task_component WHERE workflow_item_id=#{workflowItemId} AND task_component_id=#{taskComponentId}
+    </delete>
+
+    <delete id="removeAllComponentsFromWorkflowItem">
+        DELETE FROM workflow_item_task_component WHERE workflow_item_id=#{workflowItemId}
+    </delete>
+
+    <select id="getCondition" resultType="String">
+        SELECT condition FROM workflow_item_decision WHERE workflow_item_id = #{id}
+    </select>
+
+    <select id="getNextWorkflowItemOnTrue" resultType="int">
+        SELECT next_workflow_item_on_true FROM workflow_item_decision WHERE workflow_item_id = #{id}
+    </select>
+
+    <insert id="setConditionAndNextOnTrueForWorkflowDecision" parameterType="map">
+        INSERT INTO workflow_item_decision (workflow_item_id, next_workflow_item_on_true, condition) VALUES (#{workflowDecisionId}, #{nextWorkflowItemOnTrue}, #{condition})
+    </insert>
+
+    <delete id="removeConditionAndNextOnTrueFromWorkflowDecision" parameterType="int">
+        DELETE FROM workflow_item_decision WHERE workflow_item_id = #{workflowDecisionId}
+    </delete>
+    
+    <select id="getScript" resultType="String">
+        SELECT script FROM workflow_item_script WHERE workflow_item_id = #{id}
+    </select>
+    
+    <insert id="setScriptForWorkflowScript" parameterType="map">
+        INSERT INTO workflow_item_script (workflow_item_id, script) VALUES (#{workflowScriptId}, #{script})
+    </insert>
+
+    <delete id="removeScriptFromWorkflowScript" parameterType="int">
+        DELETE FROM workflow_item_script WHERE workflow_item_id = #{workflowScriptId}
+    </delete>
+    
+    <select id="getTaskVariables" resultMap="TaskVariableResult">
+        SELECT name, task_id, task_component_id FROM task_variables WHERE workflow_item_id = #{id}
+    </select>
+
+    <insert id="setVariablesForWorkflowItem" parameterType="map">
+        INSERT INTO task_variables (workflow_item_id, name, task_id, task_component_id)
+        VALUES
+        <foreach collection="variables" item="variable" separator=",">
+            (#{workflowItemId}, #{variable.name}, #{variable.taskId}, #{variable.taskComponentId})
+        </foreach>
+    </insert>
+
+    <delete id="removeVariablesFromWorkflowItem" parameterType="int">
+        DELETE FROM task_variables WHERE workflow_item_id = #{workflowItemId}
+    </delete>
+
+    <select id="getTaskComponentType" resultType="String">
+        SELECT type FROM task_component WHERE id = #{taskComponentId}
+    </select>
+</mapper>

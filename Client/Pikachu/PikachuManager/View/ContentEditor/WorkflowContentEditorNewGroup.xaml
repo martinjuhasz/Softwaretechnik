@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="PikachuManager.View.WorkflowContentEditorNewGroup"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             
+             xmlns:managerViewModel="clr-namespace:PikachuManager.ViewModel"
+             xmlns:managerView="clr-namespace:PikachuManager.View"
+             
+             xmlns:baseViewModel="clr-namespace:PikachuViewBase.ViewModel;assembly=PikachuViewBase"
+             xmlns:baseView="clr-namespace:PikachuViewBase.View;assembly=PikachuViewBase"
+             
+             mc:Ignorable="d" 
+             d:DesignHeight="389" d:DesignWidth="586.5">
+    <Grid Margin="0,0,10,0" Background="White">
+    	<Grid.ColumnDefinitions>
+    		<ColumnDefinition Width="10*"/>
+    		<ColumnDefinition Width="128*"/>
+    		<ColumnDefinition Width="439*"/>
+    	</Grid.ColumnDefinitions>
+    	<Grid.RowDefinitions>
+    		<RowDefinition/>
+    	</Grid.RowDefinitions>
+        <Label Content="Name" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="113.886" Height="28.96" Grid.Column="1"/>
+        <TextBox Text="{Binding ComponentGroupName}" Grid.Column="2" Height="23" Margin="11.32,10,177.301,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <Button Command="{Binding CancelFormsCommand}" Content="Abbrechen" HorizontalAlignment="Left" Margin="10,58.973,0,0" VerticalAlignment="Top" Width="113.886" Height="21.96" Grid.Column="1"/>
+        <Button Command="{Binding SaveComponentGroupCommand}" Content="Speichern" Margin="11.32,58.973,313.415,0" VerticalAlignment="Top" Grid.Column="2" Height="21.96"/>
+	</Grid>
+</UserControl>

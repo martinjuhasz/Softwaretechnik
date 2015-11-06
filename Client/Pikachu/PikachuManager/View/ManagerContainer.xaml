@@ -1,0 +1,74 @@
+﻿<UserControl x:Class="PikachuManager.View.ManagerContainer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             
+             xmlns:managerViewModel="clr-namespace:PikachuManager.ViewModel"
+             xmlns:managerView="clr-namespace:PikachuManager.View"
+         
+             
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="800">
+	
+    <Grid>
+		<Grid>
+            <TabControl SelectedIndex="{Binding SelectedTabIndex}"  Margin="10">
+				
+				<TabItem Header="Workflow erstellen"  Height="40" Margin="-2,-2,-2,0" Padding="20,2">
+					<Grid>
+                        <ContentControl Grid.Row="0" Grid.Column="0" Content="{Binding NewWorkflowContent}" >
+							<ContentControl.Resources>
+								<DataTemplate DataType="{x:Type managerViewModel:NewWorkflowViewModel}">
+									<managerView:NewWorkflow DataContext="{Binding }" />
+								</DataTemplate>
+							</ContentControl.Resources>
+						</ContentControl>
+					</Grid>
+				</TabItem>
+
+				<TabItem Header="Workflow bearbeiten" Height="40" Margin="-2,-2,-2,0" Padding="20,2">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="*"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+
+						<ContentControl Grid.Row="0" Grid.Column="0" Content="{Binding WorkflowManagerContent}" >
+							<ContentControl.Resources>
+								<DataTemplate DataType="{x:Type managerViewModel:WorkflowManagerViewModel}">
+									<managerView:WorkflowManager DataContext="{Binding }" />
+								</DataTemplate>
+							</ContentControl.Resources>
+						</ContentControl>
+
+					</Grid>
+				</TabItem>
+
+				<TabItem Header="User bearbeiten"  Height="40" Margin="-2,-2,-2,0" Padding="20,2">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="*"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="100*"/>
+						</Grid.ColumnDefinitions>
+
+						<ContentControl Grid.Row="0" Grid.Column="0" Content="{Binding UserManagerContent}" >
+							<ContentControl.Resources>
+								<DataTemplate DataType="{x:Type managerViewModel:UserManagerBaseViewModel}">
+									<managerView:UserManagerBase DataContext="{Binding }" />
+								</DataTemplate>
+							</ContentControl.Resources>
+						</ContentControl>
+
+					</Grid>
+				</TabItem>
+
+			</TabControl>
+			
+		</Grid>
+	</Grid>
+</UserControl>

@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE mapper PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN'
+        'http://mybatis.org/dtd/mybatis-3-mapper.dtd'>
+
+<mapper namespace='de.teamrocket.relaxo.persistence.mapper.FormGroupMapper'>
+
+    <resultMap type='FormGroup' id='FormGroupResult'>
+        <id property='id' column='id'/>
+        <result property='workflowId' column='workflow_id'/>
+        <result property='name' column='name'/>
+        <collection property='components' column='id' ofType='TaskComponent' select='getComponentsForFormGroup'/>
+    </resultMap>
+
+    <select id='getFormGroupById' parameterType='int' resultMap='FormGroupResult'>
+		SELECT * FROM form_group WHERE id=#{id}
+	</select>
+
+    <select id='getAllFormGroups' parameterType='int' resultMap='FormGroupResult'>
+        SELECT * FROM form_group WHERE workflow_id=#{workflowId}
+    </select>
+
+    <select id='getComponentsForFormGroup'
+            resultMap='de.teamrocket.relaxo.persistence.mapper.WorkflowItemMapper.TaskComponentResult'>
+		SELECT * FROM all_components WHERE form_group_id=#{id} ORDER BY index;
+	</select>
+
+    <select id='getFormGroupsByTask' parameterType='int' resultMap='FormGroupResult'>
+        SELECT tcat.form_group_id AS id, fg.name
+        FROM workflow_item_task_component wfitc
+        JOIN task_components_and_type tcat ON wfitc.task_component_id = tcat.task_component_id
+        JOIN form_group fg ON fg.id = tcat.form_group_id
+        WHERE wfitc.workflow_item_id = #{taskId} GROUP BY tcat.form_group_id, fg.name;
+    </select>
+
+    <select id='getTaskComponentsForTaskAndFormGroup' parameterType='map'
+            resultMap='de.teamrocket.relaxo.persistence.mapper.WorkflowItemMapper.TaskComponentResult'>
+		SELECT *
+		FROM workflow_item_task_component wfitc
+		JOIN task_components_and_type tcat ON wfitc.task_component_id = tcat.task_component_id
+		JOIN form_group fg ON fg.id = tcat.form_group_id
+		WHERE wfitc.workflow_item_id = #{taskId} AND tcat.form_group_id = #{formGroupId};
+	</select>
+
+    <insert id='createFormGroup' parameterType='FormGroup' useGeneratedKeys='true' keyProperty="id" keyColumn="id">
+		INSERT INTO form_group (workflow_id, name)
+		VALUES(#{workflowId}, #{name})
+	</insert>
+
+    <delete id='deleteFormGroup' parameterType='Integer'>
+		DELETE FROM form_group WHERE id = #{formGroupId}
+	</delete>
+
+    <update id="updateComponentsOrder">
+        <foreach collection="components" item="component" separator=";">
+            UPDATE task_component SET index = #{component.order} WHERE id = #{component.id}
+        </foreach>
+    </update>
+</mapper>

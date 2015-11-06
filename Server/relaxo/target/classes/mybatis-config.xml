@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE configuration
+        PUBLIC '-//mybatis.org//DTD Config 3.0//EN'
+        'http://mybatis.org/dtd/mybatis-3-config.dtd'>
+<configuration>
+    <properties resource='jdbc.properties'/>
+    <settings>
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+        <!--<setting name="logImpl" value="STDOUT_LOGGING"/>-->
+    </settings>
+    <typeAliases>
+        <typeAlias type='de.teamrocket.relaxo.models.usermanagement.User' alias='User'/>
+        <typeAlias type='de.teamrocket.relaxo.models.usermanagement.UserGroup' alias='UserGroup'/>
+        <typeAlias type='de.teamrocket.relaxo.models.workflow.Workflow' alias='Workflow'/>
+        <typeAlias type='de.teamrocket.relaxo.models.taskcomponent.FormGroup' alias='FormGroup'/>
+        <typeAlias type='de.teamrocket.relaxo.models.workflow.WorkflowItem' alias='WorkflowItem'/>
+        <typeAlias type='de.teamrocket.relaxo.models.workflow.Task' alias='Task'/>
+        <typeAlias type='de.teamrocket.relaxo.models.workflow.Start' alias='Start'/>
+        <typeAlias type='de.teamrocket.relaxo.models.workflow.End' alias='End'/>
+        <typeAlias type='de.teamrocket.relaxo.models.workflow.WorkflowDecision' alias='WorkflowDecision'/>
+        <typeAlias type='de.teamrocket.relaxo.models.workflow.WorkflowScript' alias='WorkflowScript'/>
+		<typeAlias type='de.teamrocket.relaxo.models.workflow.WorkflowFork' alias='WorkflowFork'/>
+		<typeAlias type='de.teamrocket.relaxo.models.workflow.WorkflowJoin' alias='WorkflowJoin'/>
+        <typeAlias type='de.teamrocket.relaxo.models.workflow.TaskVariable' alias='TaskVariable'/>
+        <typeAlias type="de.teamrocket.relaxo.models.taskcomponent.TaskComponent" alias='TaskComponent'/>
+        <typeAlias type="de.teamrocket.relaxo.models.taskcomponent.TaskComponentInteger" alias='TaskComponentInteger'/>
+        <typeAlias type="de.teamrocket.relaxo.models.taskcomponent.TaskComponentText" alias='TaskComponentText'/>
+        <typeAlias type="de.teamrocket.relaxo.models.taskcomponent.TaskComponentDate" alias='TaskComponentDate'/>
+        <typeAlias type="de.teamrocket.relaxo.models.taskcomponent.TaskComponentFloat" alias='TaskComponentFloat'/>
+
+        <typeAlias type="de.teamrocket.relaxo.models.job.Job" alias="Job"/>
+        <typeAlias type="de.teamrocket.relaxo.models.job.JobWorkflowItem" alias="JobWorkflowItem"/>
+        <typeAlias type="de.teamrocket.relaxo.models.job.JobTask" alias="JobTask"/>
+		<typeAlias type="de.teamrocket.relaxo.models.job.JoinBranch" alias="JoinBranch"/>
+
+        <typeAlias type="de.teamrocket.relaxo.models.job.jobtaskcomponent.JobTaskComponent" alias="JobTaskComponent"/>
+        <typeAlias type="de.teamrocket.relaxo.models.job.jobtaskcomponent.JobTaskComponentInteger"
+                   alias="JobTaskComponentInteger"/>
+        <typeAlias type="de.teamrocket.relaxo.models.job.jobtaskcomponent.JobTaskComponentText"
+                   alias="JobTaskComponentText"/>
+        <typeAlias type="de.teamrocket.relaxo.models.job.jobtaskcomponent.JobTaskComponentDate"
+                   alias="JobTaskComponentDate"/>
+        <typeAlias type="de.teamrocket.relaxo.models.job.jobtaskcomponent.JobTaskComponentFloat"
+                   alias="JobTaskComponentFloat"/>
+        <typeAlias type="de.teamrocket.relaxo.models.workflow.FormGroupForTask" alias="FormGroupForTask"/>
+    </typeAliases>
+    <environments default='development'>
+        <environment id='development'>
+            <transactionManager type='JDBC'/>
+            <dataSource type='POOLED'>
+                <property name='driver' value='${jdbc.driverClassName}'/>
+                <property name='url' value='${jdbc.url}'/>
+                <property name='username' value='${jdbc.username}'/>
+                <property name='password' value='${jdbc.password}'/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper resource="xmlmapper/UserManagementMapper.xml"/>
+        <mapper resource="xmlmapper/WorkflowMapper.xml"/>
+        <mapper resource="xmlmapper/WorkflowItemMapper.xml"/>
+        <mapper resource="xmlmapper/JobMapper.xml"/>
+        <mapper resource="xmlmapper/FormGroupMapper.xml"/>
+    </mappers>
+</configuration>

@@ -1,0 +1,100 @@
+﻿<UserControl x:Class="PikachuManager.View.WorkflowitemEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             
+             xmlns:managerWFItems="clr-namespace:PikachuManager.View.Workflowitems"
+             xmlns:managerWFItemsViewModel="clr-namespace:PikachuManager.ViewModel.Workflowitems"
+             
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="400" Background="White">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+
+        <Grid Grid.Row="0" Background="LightBlue">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="17*"/>
+                <ColumnDefinition Width="83*"/>
+                <ColumnDefinition Width="40"/>
+                <ColumnDefinition Width="40"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="ID" FontSize="17" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Label Content="{Binding WorkflowitemId}" FontSize="16" Margin="0" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Button Content="Ok" Command="{Binding OkCommand}" Grid.Column="3" Width="35" Height="35" />
+            <Button Content="Abort" Command="{Binding AbortCommand}" Grid.Column="2" Width="35" Height="35" />
+        </Grid>
+
+        <ContentControl Grid.Row="2" Content="{Binding WorkflowItem}">
+            <ContentControl.Resources>
+                <DataTemplate DataType="{x:Type managerWFItemsViewModel:TaskViewModel}">
+                    <managerWFItems:TaskEditor DataContext="{Binding }" />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type managerWFItemsViewModel:StartViewModel}">
+                    <managerWFItems:StartEditor DataContext="{Binding }" />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type managerWFItemsViewModel:DecisionViewModel}">
+                    <managerWFItems:DecisionEditor DataContext="{Binding }" />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type managerWFItemsViewModel:ScriptViewModel}">
+                    <managerWFItems:ScriptEditor DataContext="{Binding }" />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type managerWFItemsViewModel:EndViewModel}">
+                    <!--- 
+                    Das Ende-Workflowitem hat keine Konfigurationsmöglichkeiten
+                    Template muss trotzdem definiert werden, da ansonsten den Klassenpfad zum ViewModel angezeigt wird.
+                    -->
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type managerWFItemsViewModel:ForkViewModel}">
+                    <!--- 
+                    Das Ende-Workflowitem hat keine Konfigurationsmöglichkeiten
+                    Template muss trotzdem definiert werden, da ansonsten den Klassenpfad zum ViewModel angezeigt wird.
+                    -->
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type managerWFItemsViewModel:JoinViewModel}">
+                    <!--- 
+                    Das Ende-Workflowitem hat keine Konfigurationsmöglichkeiten
+                    Template muss trotzdem definiert werden, da ansonsten den Klassenpfad zum ViewModel angezeigt wird.
+                    -->
+                </DataTemplate>
+            </ContentControl.Resources>
+        </ContentControl>
+
+        
+        <ScrollViewer Grid.Row="3" MaxHeight="50"  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <ScrollViewer.Style>
+                <Style TargetType="ScrollViewer">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=ErrorLabel, Path=Content}" Value="">
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ScrollViewer.Style>
+            
+            <Border x:Name="ErrorBorder" BorderThickness="2" BorderBrush="Red" Visibility="Visible">
+                <Label x:Name="ErrorLabel" Content="{Binding ErrorMessage}" Foreground="Red" FontSize="12" />
+            </Border>
+        </ScrollViewer>
+        
+
+
+        <!-- Kommentar zu jedem workflowitem? -->
+        <!--<Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="57*" />
+                <ColumnDefinition Width="117*" />
+                <ColumnDefinition Width="20" />
+            </Grid.ColumnDefinitions>
+
+            <Label Content="Kommentar:" VerticalContentAlignment="Center" />
+            <TextBox Grid.Column="1" Text="{Binding Comment}" Margin="0,18" />
+        </Grid>-->
+    </Grid>
+</UserControl>

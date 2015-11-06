@@ -1,0 +1,67 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pikachu", "Pikachu\Pikachu.csproj", "{E1324D8A-ECC3-4502-9722-379785BE3A2D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PikachuLib", "PikachuLib\PikachuLib.csproj", "{9ED7DA87-E17E-4930-8ED1-EACF411EE1F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutputTest", "OutputTest\OutputTest.csproj", "{C52733E8-4AF7-496D-822A-BDAC0E376EAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PikachuClient", "PikachuClient\PikachuClient.csproj", "{7AA489AF-195C-4769-9CE0-D6A933BE95A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PikachuViewBase", "PikachuViewBase\PikachuViewBase.csproj", "{437EEA7C-5924-4702-BAA8-9F7E4B9BF7E2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{AC7A843D-7FF3-4CB5-978C-A9C2147FE376}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PikachuLibTest", "PikachuLibTest\PikachuLibTest.csproj", "{97DEE4F3-A556-4630-9191-77BAF5B2CE2C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PikachuManager", "PikachuManager\PikachuManager.csproj", "{7F99FFF4-05B5-4066-BDF3-414174318304}"
+EndProject
+Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E1324D8A-ECC3-4502-9722-379785BE3A2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1324D8A-ECC3-4502-9722-379785BE3A2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1324D8A-ECC3-4502-9722-379785BE3A2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1324D8A-ECC3-4502-9722-379785BE3A2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9ED7DA87-E17E-4930-8ED1-EACF411EE1F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED7DA87-E17E-4930-8ED1-EACF411EE1F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ED7DA87-E17E-4930-8ED1-EACF411EE1F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ED7DA87-E17E-4930-8ED1-EACF411EE1F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C52733E8-4AF7-496D-822A-BDAC0E376EAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C52733E8-4AF7-496D-822A-BDAC0E376EAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C52733E8-4AF7-496D-822A-BDAC0E376EAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C52733E8-4AF7-496D-822A-BDAC0E376EAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AA489AF-195C-4769-9CE0-D6A933BE95A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AA489AF-195C-4769-9CE0-D6A933BE95A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AA489AF-195C-4769-9CE0-D6A933BE95A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AA489AF-195C-4769-9CE0-D6A933BE95A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{437EEA7C-5924-4702-BAA8-9F7E4B9BF7E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{437EEA7C-5924-4702-BAA8-9F7E4B9BF7E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{437EEA7C-5924-4702-BAA8-9F7E4B9BF7E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{437EEA7C-5924-4702-BAA8-9F7E4B9BF7E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97DEE4F3-A556-4630-9191-77BAF5B2CE2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97DEE4F3-A556-4630-9191-77BAF5B2CE2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97DEE4F3-A556-4630-9191-77BAF5B2CE2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97DEE4F3-A556-4630-9191-77BAF5B2CE2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F99FFF4-05B5-4066-BDF3-414174318304}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F99FFF4-05B5-4066-BDF3-414174318304}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F99FFF4-05B5-4066-BDF3-414174318304}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F99FFF4-05B5-4066-BDF3-414174318304}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

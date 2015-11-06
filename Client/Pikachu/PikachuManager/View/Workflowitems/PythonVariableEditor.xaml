@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="PikachuManager.View.Workflowitems.PythonVariableEditor"
+             x:Name="DecisionVariableControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="150" d:DesignWidth="300">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50*"/>
+            <RowDefinition Height="50*"/>
+            <RowDefinition Height="50*"/>
+        </Grid.RowDefinitions>
+
+        <Label Content="Name" VerticalAlignment="Center" />
+        <TextBox Grid.Column="1" 
+                 Grid.Row="0" 
+                 Height="25" 
+                 Text="{Binding ElementName=DecisionVariableControl, Path=PythonVariable.Name}" />
+
+        <Label Content="Task" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+        <ComboBox x:Name="TaskComboBox" 
+                  Grid.Row="1"
+                  Grid.Column="1"
+                  Height="30" 
+                  ItemsSource="{Binding ElementName=DecisionVariableControl, Path=AllTasks}" 
+                  SelectedItem="{Binding ElementName=DecisionVariableControl, Path=SelectedTask}" />
+
+        <Label Content="Formularkomponente" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
+        <ComboBox Grid.Row="2" 
+                  Grid.Column="1"
+                  Height="30"
+                  ItemsSource="{Binding ElementName=DecisionVariableControl, Path=AllTaskComponents}" 
+                  SelectedItem="{Binding ElementName=DecisionVariableControl, Path=SelectedTaskComponent}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <Label Content="{Binding Name}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+    </Grid>
+</UserControl>

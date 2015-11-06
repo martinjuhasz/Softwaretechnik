@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9ED7DA87-E17E-4930-8ED1-EACF411EE1F6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PikachuLib</RootNamespace>
+    <AssemblyName>PikachuLib</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <SccProjectName>Svn</SccProjectName>
+    <SccLocalPath>Svn</SccLocalPath>
+    <SccAuxPath>Svn</SccAuxPath>
+    <SccProvider>SubversionScc</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Apache.NMS">
+      <HintPath>..\packages\Apache.NMS.1.6.0.3083\lib\net40\Apache.NMS.dll</HintPath>
+    </Reference>
+    <Reference Include="Apache.NMS.ActiveMQ">
+      <HintPath>..\packages\Apache.NMS.ActiveMQ.1.6.3\lib\net40\Apache.NMS.ActiveMQ.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\packages\RestSharp.105.0.1\lib\net4\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ClientSession.cs" />
+    <Compile Include="Communication\CustomJsonConverter\IsoJsonConverter.cs" />
+    <Compile Include="Communication\CustomJsonConverter\JobComponentJsonConverter.cs" />
+    <Compile Include="Communication\CustomJsonConverter\TaskComponentJsonConverter.cs" />
+    <Compile Include="Communication\Event\WorkflowsChangedEventArgs.cs" />
+    <Compile Include="Communication\Event\WorkflowMessageEditorEventArgs.cs" />
+    <Compile Include="Communication\Event\WorkflowEventArgs.cs" />
+    <Compile Include="Communication\Event\WorkflowMessageEventArgs.cs" />
+    <Compile Include="Communication\MessagingHandler\WorkflowsChangedMessageHandler.cs" />
+    <Compile Include="Communication\MessagingHandler\WorkflowEditorMessageHandler.cs" />
+    <Compile Include="Communication\MessagingHandler\MessageHandler.cs" />
+    <Compile Include="Communication\MessagingClient.cs" />
+    <Compile Include="Communication\Models\Usermanagement\CreateUserGroupResponse.cs" />
+    <Compile Include="Communication\Models\Usermanagement\CreateUserResponse.cs" />
+    <Compile Include="Communication\Models\Usermanagement\UpdateUserResponse.cs" />
+    <Compile Include="Communication\Models\Usermanagement\UserResponse.cs" />
+    <Compile Include="Communication\Models\FormGroup\ComponentOrder.cs" />
+    <Compile Include="Communication\Models\Workflow\DecisionResponse.cs" />
+    <Compile Include="Communication\Models\Workflow\PythonVariableResponse.cs" />
+    <Compile Include="Communication\Models\Workflow\ScriptResponse.cs" />
+    <Compile Include="Communication\Models\Workflow\StartResponse.cs" />
+    <Compile Include="Communication\Models\Workflow\TasksResponse.cs" />
+    <Compile Include="Communication\Models\Workflow\Position.cs" />
+    <Compile Include="Communication\Request\FormGroup\CreateTextComponentRequest.cs" />
+    <Compile Include="Communication\Request\FormGroup\CreateIntegerComponentRequest.cs" />
+    <Compile Include="Communication\Request\FormGroup\CreateFloatComponentRequest.cs" />
+    <Compile Include="Communication\Request\FormGroup\CreateDateComponentRequest.cs" />
+    <Compile Include="Communication\Request\FormGroup\UpdateComponentOrderRequest.cs" />
+    <Compile Include="Communication\Request\Script\GetScriptRequest.cs" />
+    <Compile Include="Communication\Request\Script\UpdateScriptRequest.cs" />
+    <Compile Include="Communication\Request\Session\DeleteSessionRequest.cs" />
+    <Compile Include="Communication\Request\Start\GetStartRequest.cs" />
+    <Compile Include="Communication\Request\Start\UpdateStartRequest.cs" />
+    <Compile Include="Communication\Request\Task\LockJobRequest.cs" />
+    <Compile Include="Communication\Request\Task\UnlockJobRequest.cs" />
+    <Compile Include="Communication\Request\Task\UpdateTaskRequest.cs" />
+    <Compile Include="Communication\Request\UserManagement\AddUserToUserGroupRequest.cs" />
+    <Compile Include="Communication\Request\UserManagement\CreateUserGroupRequest.cs" />
+    <Compile Include="Communication\Request\UserManagement\CreateUserRequest.cs" />
+    <Compile Include="Communication\Request\UserManagement\GetAllUserRequest.cs" />
+    <Compile Include="Communication\Request\UserManagement\GetUserGroupsForUserRequest.cs" />
+    <Compile Include="Communication\Request\UserManagement\GetUserRequest.cs" />
+    <Compile Include="Communication\Request\UserManagement\GetUsersByUserGroupRequest.cs" />
+    <Compile Include="Communication\Request\UserManagement\RemoveUserFromUserGroupRequest.cs" />
+    <Compile Include="Communication\Request\UserManagement\UpdateUserRequest.cs" />
+    <Compile Include="Communication\Request\WorkflowDecision\GetDecisionRequest.cs" />
+    <Compile Include="Communication\Request\WorkflowDecision\UpdateDecisionRequest.cs" />
+    <Compile Include="Communication\Request\FormGroup\GetFormGroupsRequest.cs" />
+    <Compile Include="Communication\Request\Workflow\CreateJobRequest.cs" />
+    <Compile Include="Communication\Request\Workflow\CreateWorkflowItemRequest.cs" />
+    <Compile Include="Communication\Request\Workflow\CreateWorkflowRequest.cs" />
+    <Compile Include="Communication\Request\Workflowitem\DeleteWorkflowItemRequest.cs" />
+    <Compile Include="Communication\Request\Workflow\DeleteWorkflowRequest.cs" />
+    <Compile Include="Communication\Request\Job\GetJobRequest.cs" />
+    <Compile Include="Communication\Request\Task\GetJobsRequest.cs" />
+    <Compile Include="Communication\Request\Task\GetTaskDetailRequest.cs" />
+    <Compile Include="Communication\Request\UserManagement\GetUsergroupsRequest.cs" />
+    <Compile Include="Communication\Request\Workflow\GetWorkflowItemsForWorkflowRequest.cs" />
+    <Compile Include="Communication\Request\FormGroup\CreateFormGroupRequest.cs" />
+    <Compile Include="Communication\Request\FormGroup\CreateComponentRequest.cs" />
+    <Compile Include="Communication\Request\Workflowitem\LockWorkflowItemRequest.cs" />
+    <Compile Include="Communication\Request\RequestBase.cs" />
+    <Compile Include="Communication\Request\Workflowitem\SetWorkflowItemNextItemRequest.cs" />
+    <Compile Include="Communication\Request\Workflowitem\SetWorkflowItemPositionRequest.cs" />
+    <Compile Include="Communication\Request\Job\UpdateJobRequest.cs" />
+    <Compile Include="Communication\Models\Workflow\CreateJobResponse.cs" />
+    <Compile Include="Communication\Models\Workflow\CreateWorkflowItemResponse.cs" />
+    <Compile Include="Communication\Models\Workflow\CreateWorkflowResponse.cs" />
+    <Compile Include="Communication\Models\Workflow\WorkflowitemResponse.cs" />
+    <Compile Include="Communication\Models\Job\JobComponentResponse.cs" />
+    <Compile Include="Communication\Models\Job\JobDetailResponse.cs" />
+    <Compile Include="Communication\Models\Job\JobTaskResponse.cs" />
+    <Compile Include="Communication\Models\FormGroup\TaskComponentGroupResponse.cs" />
+    <Compile Include="Communication\Models\FormGroup\TaskComponentResponse.cs" />
+    <Compile Include="Communication\Models\Usermanagement\UsergroupResponse.cs" />
+    <Compile Include="Communication\RelaxoClient.cs" />
+    <Compile Include="Communication\Request\Session\GetSessionRequest.cs" />
+    <Compile Include="Communication\Request\Task\GetTasksRequest.cs" />
+    <Compile Include="Communication\Request\Workflow\GetWorkflowsRequest.cs" />
+    <Compile Include="Communication\Models\Job\JobsResponse.cs" />
+    <Compile Include="Communication\Models\Usermanagement\SessionResponse.cs" />
+    <Compile Include="Communication\Models\Workflow\WorkflowsResponse.cs" />
+    <Compile Include="Communication\Request\Workflow\LockWorkflowRequest.cs" />
+    <Compile Include="Communication\Request\Workflow\UnlockWorkflowRequest.cs" />
+    <Compile Include="Communication\RESTException.cs" />
+    <Compile Include="Communication\MessagingHandler\WorkflowMessageHandler.cs" />
+    <Compile Include="Communication\Models\Error.cs" />
+    <Compile Include="Models\Job\Job.cs" />
+    <Compile Include="Models\TaskComponent\TaskComponentDate.cs" />
+    <Compile Include="Models\TaskComponent\TaskComponentFloat.cs" />
+    <Compile Include="Models\TaskComponent\TaskComponentInteger.cs" />
+    <Compile Include="Models\Workflow\Decision.cs" />
+    <Compile Include="Models\Workflow\Fork.cs" />
+    <Compile Include="Models\Workflow\Join.cs" />
+    <Compile Include="Models\Workflow\PythonVariable.cs" />
+    <Compile Include="Models\Workflow\Position.cs" />
+    <Compile Include="Models\Usermanagement\User.cs" />
+    <Compile Include="Models\Job\JobComponent.cs" />
+    <Compile Include="Models\Job\JobTask.cs" />
+    <Compile Include="Models\Usermanagement\UserGroup.cs" />
+    <Compile Include="Models\Workflow\End.cs" />
+    <Compile Include="Models\Workflow\Script.cs" />
+    <Compile Include="Models\Workflow\Start.cs" />
+    <Compile Include="Models\Workflow\Task.cs" />
+    <Compile Include="Models\TaskComponent\TaskComponentGroup.cs" />
+    <Compile Include="Models\TaskComponent\TaskComponent.cs" />
+    <Compile Include="Models\TaskComponent\TaskComponentText.cs" />
+    <Compile Include="Models\Workflow\Workflow.cs" />
+    <Compile Include="Models\Workflow\WorkflowItem.cs" />
+    <Compile Include="Models\Workflow\WorkflowItemType.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

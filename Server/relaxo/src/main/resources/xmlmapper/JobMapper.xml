@@ -1,0 +1,272 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE mapper PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN'
+        'http://mybatis.org/dtd/mybatis-3-mapper.dtd'>
+
+<mapper namespace='de.teamrocket.relaxo.persistence.mapper.JobMapper'>
+
+    <resultMap type='Job' id='JobResult'>
+        <id property='id' column='id'/>
+        <result property='workflowId' column='workflow_id'/>
+        <result property='creatorId' column='creator_id'/>
+        <result property='startTime' column='start_time'/>
+        <result property='endTime' column='end_time'/>
+    </resultMap>
+
+    <resultMap type='JobTask' id='JobTaskResult'>
+        <id property="id" column="job_task_id"/>
+        <result property="jobId" column="job_id"/>
+        <result property="workflowItemId" column='workflow_item_id'/>
+        <result property="done" column="done"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="blockerUserId" column="blocker_user_id"/>
+        <result property="editorUserId" column="editor_user_id"/>
+        <collection property="jobTaskComponents" ofType="JobTaskComponent" resultMap="JobTaskComponentResult"
+                    notNullColumn="job_task_component_id"/>
+    </resultMap>
+
+    <resultMap type='JobTaskComponent' id='JobTaskComponentResult'>
+        <id property="id" column="job_task_component_id"/>
+        <result property="taskComponentId" column="task_component_id"/>
+        <result property="jobTaskId" column="job_task_id"/>
+
+        <discriminator javaType='String' column='job_task_component_type'>
+            <case value='INT' resultType='JobTaskComponentInteger'>
+                <result property='value' column='int_value'/>
+            </case>
+            <case value='TEXTLABEL' resultType='JobTaskComponentText'>
+                <result property='value' column='text_value'/>
+            </case>
+            <case value='DATE' resultType='JobTaskComponentDate'>
+                <result property='value' column='date_value'/>
+            </case>
+            <case value='FLOAT' resultType='JobTaskComponentFloat'>
+                <result property='value' column='float_value'/>
+            </case>
+        </discriminator>
+    </resultMap>
+
+    <resultMap type="JobWorkflowItem" id="JobWorkflowItemResult">
+        <id property="id" column="id"/>
+        <result property="workflowItemId" column="workflow_item_id"/>
+        <result property="jobId" column="job_id"/>
+        <result property="done" column="done"/>
+    </resultMap>
+    
+    <resultMap type="JoinBranch" id="JoinBranchResult">
+        <id property="id" column="id"/>
+        <result property="workflowItemId" column="workflow_item_id"/>
+        <result property="jobId" column="job_id"/>
+        <result property="done" column="done"/>
+        <result property="prevWorkflowItemId" column="prev_workflowItemId"/> 
+    </resultMap>
+
+
+    <select id='getJobById' parameterType='int' resultMap='JobResult'>
+		SELECT * FROM job WHERE id=#{jobId}
+	</select>
+
+    <insert id='createJob' parameterType='Job' useGeneratedKeys='true' keyProperty="id" keyColumn="id">
+        INSERT INTO job (workflow_id, creator_id, start_time)
+        VALUES(#{workflowId}, #{creatorId}, now())
+    </insert>
+
+    <delete id='deleteJob' parameterType='int'>
+	    DELETE FROM job WHERE id = #{jobId}
+	</delete>
+
+    <select id='getJobTasks' parameterType='int' resultMap='JobTaskResult'>
+	    SELECT * FROM all_job_tasks WHERE job_id = #{jobId}
+	</select>
+
+    <select id="getJobTasksForJobAndTask" parameterType="map" resultMap="JobTaskResult">
+		SELECT * FROM active_job_tasks WHERE job_id = #{jobId} AND workflow_item_id = #{taskId}
+	</select>
+
+    <select id="getActiveJobTaskForJobAndTask" parameterType="map" resultMap="JobTaskResult">
+        SELECT * FROM all_job_tasks WHERE job_id = #{jobId} AND workflow_item_id = #{taskId} AND done = False
+    </select>
+
+    <select id='getSecondItemId' parameterType='map' resultType='Integer'>
+		SELECT wfi.id AS workflow_item_id
+		FROM workflow_item wfi
+		JOIN user_workflow_items uwfi ON wfi.id = uwfi.workflow_item_id
+		WHERE uwfi.user_id = #{userId} AND wfi.type = 'TASK' AND wfi.id = (SELECT next_workflow_item_id FROM workflow_items_workflow WHERE workflow_id = #{workflowId} AND type = 'START');
+	</select>
+
+    <select id="getJobsForTask" resultMap="JobResult">
+		SELECT * FROM jobs_for_task WHERE task_id = #{taskId}
+	</select>
+
+    <insert id="createJobWorkflowItem" parameterType="JobWorkflowItem" useGeneratedKeys='true' keyProperty="id" keyColumn="id">
+		INSERT INTO job_workflow_item(workflow_item_id, job_id, done) VALUES(#{workflowItemId}, #{jobId}, False)
+    </insert>
+
+    <select id="getJobWorkflowItemById" parameterType="int" resultMap="JobWorkflowItemResult">
+		SELECT job_workflow_item.*, wfi.type
+		FROM job_workflow_item
+		JOIN workflow_item wfi ON job_workflow_item.workflow_item_id = wfi.id
+		WHERE id = #{id}
+	</select>
+
+    <select id="getAllJobWorkflowItemsForJob" parameterType="int" resultMap="JobWorkflowItemResult">
+		SELECT job_workflow_item.*, wfi.type
+		FROM job_workflow_item
+		JOIN workflow_item wfi ON job_workflow_item.workflow_item_id = wfi.id
+		WHERE job_id = #{jobId}
+	</select>
+
+    <delete id="deleteJobWorkflowItem" parameterType="int">
+		DELETE FROM job_workflow_item WHERE id=#{jobWorkflowItemId}
+	</delete>
+
+    <insert id="insertJobTask" parameterType="JobTask" useGeneratedKeys="true" keyProperty="startTime"
+            keyColumn="start_time">
+		INSERT INTO job_task(job_workflow_item_id, start_time) VALUES(#{id}, now())
+	</insert>
+	
+    <insert id="insertJoinBranch" parameterType="JoinBranch">
+        INSERT INTO join_branch(job_workflow_item_id, prev_workflow_item_id) VALUES(#{id}, #{prevWorkflowItemId})
+    </insert>
+    
+    <select id="getActiveJoinBranch" parameterType="map" resultMap="JoinBranchResult">
+        SELECT join_branch_id AS id, workflow_item_id, job_id, done, prev_workflow_item_id FROM active_join_branches WHERE workflow_item_id = #{workflowJoinId} AND job_id = #{jobId} AND prev_workflow_item_id = #{prevWorkflowItemId}
+    </select>
+
+    <select id="getJobsForWorkflow" parameterType="Workflow" resultMap="JobResult">
+		SELECT * FROM JOB WHERE workflow_id = #{id}
+	</select>
+
+    <insert id="createJobTaskComponents" parameterType="map">
+        <foreach item="taskComponent" collection="taskComponents">
+            INSERT INTO job_task_component (job_task_id, task_component_id) VALUES (#{jobTask.id}, #{taskComponent.id});
+            <choose>
+                <when test='taskComponent.getClass().getSimpleName() == "TaskComponentInteger"'>
+                    INSERT INTO job_task_component_int (job_task_component_id, value)
+                    SELECT CURRVAL('job_task_component_id_seq'), value
+                    FROM
+                    (
+                    SELECT
+                    COALESCE(
+                    (
+                    SELECT int_value FROM act_job_task_component_value
+                    WHERE job_id = #{jobTask.jobId} AND task_component_id = #{taskComponent.id}
+                    ),
+                    #{taskComponent.defaultValue}
+                    ) AS value
+                    ) AS x;
+                </when>
+                <when test='taskComponent.getClass().getSimpleName() == "TaskComponentFloat"'>
+                    INSERT INTO job_task_component_float (job_task_component_id, value)
+                    SELECT CURRVAL('job_task_component_id_seq'), value
+                    FROM
+                    (
+                    SELECT
+                    COALESCE(
+                    (
+                    SELECT float_value FROM act_job_task_component_value
+                    WHERE job_id = #{jobTask.jobId} AND task_component_id = #{taskComponent.id}
+                    ),
+                    #{taskComponent.defaultValue}
+                    ) AS value
+                    ) AS x;
+                </when>
+                <when test='taskComponent.getClass().getSimpleName() == "TaskComponentText"'>
+                    INSERT INTO job_task_component_text (job_task_component_id, value)
+                    SELECT CURRVAL('job_task_component_id_seq'), value
+                    FROM
+                    (
+                    SELECT
+                    COALESCE(
+                    (
+                    SELECT text_value FROM act_job_task_component_value
+                    WHERE job_id = #{jobTask.jobId} AND task_component_id = #{taskComponent.id}
+                    ),
+                    #{taskComponent.defaultValue}
+                    ) AS value
+                    ) AS x;
+                </when>
+                <when test='taskComponent.getClass().getSimpleName() == "TaskComponentDate"'>
+                    INSERT INTO job_task_component_date (job_task_component_id, value)
+                    SELECT CURRVAL('job_task_component_id_seq'), value
+                    FROM
+                    (
+                    SELECT
+                    COALESCE(
+                    (
+                    SELECT date_value FROM act_job_task_component_value
+                    WHERE job_id = #{jobTask.jobId} AND task_component_id = #{taskComponent.id}
+                    ),
+                    #{taskComponent.defaultValue}
+                    ) AS value
+                    ) AS x;
+                </when>
+            </choose>
+
+        </foreach>
+    </insert>
+
+    <select id="getActiveJobTaskComponent" parameterType="map" resultMap="JobTaskComponentResult">
+	    SELECT * FROM active_job_tasks WHERE job_id = #{jobId} AND workflow_item_id = #{taskId} AND task_component_id = #{taskComponentId}
+	</select>
+
+    <select id="getInactiveJobTaskComponent" parameterType="map" resultMap="JobTaskComponentResult">
+	    SELECT * FROM inactive_job_tasks WHERE job_id = #{jobId} AND workflow_item_id = #{taskId} AND task_component_id = #{taskComponentId} ORDER BY job_task_id DESC LIMIT 1
+	</select>
+
+    <update id="updateJobTaskComponent" parameterType="JobTaskComponent">
+        <trim prefix="UPDATE">
+            <trim suffix="SET value=#{value} WHERE job_task_component_id = #{id}">
+                <choose>
+                    <when test='_parameter.getClass().getSimpleName() == "JobTaskComponentInteger"'>
+                        job_task_component_int
+                    </when>
+                    <when test='_parameter.getClass().getSimpleName() == "JobTaskComponentText"'>
+                        job_task_component_text
+                    </when>
+                    <when test='_parameter.getClass().getSimpleName() == "JobTaskComponentDate"'>
+                        job_task_component_date
+                    </when>
+                    <when test='_parameter.getClass().getSimpleName() == "JobTaskComponentFloat"'>
+                        job_task_component_float
+                    </when>
+                </choose>
+            </trim>
+        </trim>
+    </update>
+
+    <update id="finishJob" parameterType="int">
+	    UPDATE job SET end_time=NOW() WHERE id=#{jobId}
+	</update>
+
+    <update id="finishJobTask" parameterType="map">
+		UPDATE job_task SET end_time=NOW(), editor_user_id=#{editorUserId} WHERE job_workflow_item_id=(
+		SELECT id FROM job_workflow_item WHERE job_id=#{jobId} AND workflow_item_id=#{taskId} AND done=False);
+		UPDATE job_workflow_item SET done=True WHERE id = (
+		SELECT id FROM job_workflow_item WHERE job_id=#{jobId} AND workflow_item_id=#{taskId} AND done=False);
+	</update>
+
+    <update id="finishJobWorkflowItem" parameterType="int">
+	    UPDATE job_workflow_item SET done=True WHERE id=#{jobWorkflowItemId}
+	</update>
+
+    <select id='isUserAbleToStartJobsForWorkflow' parameterType='map' resultType='boolean'>
+		SELECT CASE WHEN EXISTS (
+		SELECT * FROM isUserAbleToStartJobsForWorkflow WHERE workflow_id=#{workflow.id} AND user_id=#{user.id}
+		)
+		THEN CAST(1 AS BIT)
+		ELSE CAST(0 AS BIT) END
+	</select>
+
+    <update id="lockJobTask" parameterType="map">
+        UPDATE job_task
+        SET blocker_user_id = #{blockerUserId}
+        WHERE job_workflow_item_id = #{jobTaskId}
+    </update>
+
+    <update id="unlockJobTask" parameterType="int">
+        UPDATE job_task
+        SET blocker_user_id = NULL
+        WHERE job_workflow_item_id = #{jobTaskId}
+    </update>
+</mapper>

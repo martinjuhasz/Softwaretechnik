@@ -1,0 +1,52 @@
+﻿    
+    
+    
+    <UserControl x:Class="PikachuClient.View.ClientContainer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:pikachuClientViewModel="clr-namespace:PikachuClient.ViewModel"
+             xmlns:baseView="clr-namespace:PikachuViewBase.View;assembly=PikachuViewBase"
+             xmlns:view="clr-namespace:PikachuClient.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="600">
+
+    <Grid Background="White">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+		<Label Content="Workflows" Grid.Row="0" Grid.Column="0" FontWeight="Bold" HorizontalAlignment="Left" Height="25" VerticalAlignment="Bottom" Width="120" Margin="15,0,0,0"/>
+
+		<Label Content="Jobs" Grid.Row="0" Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Left" Height="25" VerticalAlignment="Bottom" Width="120" Margin="15,0,0,0"/>
+
+		<ScrollViewer Grid.Row="1" Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
+            <baseView:WorkflowNavigation DataContext="{Binding NavViewModel}" ShowPublishWorkflow="Hidden" />
+            </ScrollViewer>
+
+			<ContentControl Margin="10" Grid.Row="1" Grid.Column="1" Content="{Binding JobListViewModel}" >
+                <ContentControl.Resources>
+                    <DataTemplate DataType="{x:Type pikachuClientViewModel:JobListViewModel}">
+                        <view:JobList DataContext="{Binding}"/>
+                    </DataTemplate>
+                </ContentControl.Resources>
+            </ContentControl>
+
+        <ContentControl Visibility="{Binding TaskFormularViewModel.IsEnabled, Converter={StaticResource BoolToVis}}" Content="{Binding TaskFormularViewModel}" Grid.RowSpan="2" Grid.ColumnSpan="2" >
+                <ContentControl.Resources>
+                    <DataTemplate DataType="{x:Type pikachuClientViewModel:TaskFormularViewModel}">
+                        <view:TaskFormular DataContext="{Binding}" />
+                    </DataTemplate>
+                </ContentControl.Resources>
+				
+            </ContentControl>
+
+    </Grid>
+</UserControl>

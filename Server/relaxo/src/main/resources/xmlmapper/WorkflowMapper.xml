@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE mapper PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN'
+        'http://mybatis.org/dtd/mybatis-3-mapper.dtd'>
+
+<mapper namespace='de.teamrocket.relaxo.persistence.mapper.WorkflowMapper'>
+
+    <resultMap type='Workflow' id='WorkflowUserResult'>
+        <id property='id' column='workflow_id'/>
+        <result property='name' column='workflow_name'/>
+    </resultMap>
+
+    <resultMap type='Workflow' id='WorkflowDetailResult'>
+        <id property='id' column='id'/>
+        <result property='name' column='name'/>
+        <result property='startItemId' column='start_item_id'/>
+        <result property='creatorId' column='creator_id'/>
+        <result property='creationDate' column='creation_date'/>
+        <result property='runnable' column='runnable'/>
+    </resultMap>
+
+    <select id='getAllWorkflows' resultMap='WorkflowDetailResult'>
+        SELECT * FROM workflow
+    </select>
+
+    <select id='getEditableWorkflows' resultMap='WorkflowDetailResult'>
+        SELECT * FROM workflow WHERE runnable = FALSE;
+    </select>
+
+    <select id='getUserWorkflows' parameterType='Integer' resultMap='WorkflowUserResult'>
+        SELECT workflow_id, workflow_name
+        FROM workflow_user
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id='getWorkflowById' parameterType='Integer' resultMap='WorkflowDetailResult'>
+        SELECT * FROM workflow WHERE id=#{workflowId}
+    </select>
+
+    <insert id='createWorkflow' parameterType='Workflow' useGeneratedKeys='true' keyProperty="id" keyColumn="id">
+        INSERT INTO workflow(name, creator_id, creation_date)
+        VALUES(#{name}, #{creatorId}, now())
+    </insert>
+
+    <update id='updateWorkflow' parameterType='Workflow' useGeneratedKeys='true'>
+        UPDATE workflow
+        SET name = #{name}, creator_id = #{creatorId}, start_item_id = #{startItemId}, creation_date = #{creationDate}
+        WHERE id = #{id}
+    </update>
+
+    <delete id='deleteWorkflow' parameterType='Integer'>
+        DELETE FROM workflow WHERE id = #{workflowId}
+    </delete>
+
+    <update id="updateRunnableStateForWorkflow" parameterType="map">
+        UPDATE workflow
+        SET runnable = #{runnable}
+        WHERE id = #{workflowId}
+    </update>
+
+    <update id="setStartItemId" parameterType="map">
+        UPDATE workflow
+        SET start_item_id = #{startItemId}
+        WHERE id = #{workflowId}
+    </update>
+
+</mapper>
